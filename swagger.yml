@@ -1,0 +1,52 @@
+---
+swagger: "2.0"
+info:
+  description: "Feedbacktool endpoints"
+  version: "0.0.1"
+  title: "Feedbacktool Service API"
+host: "localhost:8080"
+schemes:
+- "http"
+produces:
+- "application/json"
+paths:
+  /feedback:
+    post:
+      summary: "Post a new Feedback"
+      description: "endpoint for posting a newly created feedback to the server"
+      operationId: "postDwarf"
+      parameters:
+        - name: payload
+          in: body
+          required: true
+          description: A single JSON object containing the dwarf definition
+          schema:
+            $ref: '#/definitions/Dwarf'
+      responses: 
+        200:
+          description: indicates a successful update
+    get:
+      summary: "All feedback"
+      description: "Gets all feedback"
+      operationId: getFeedback
+      responses:
+        200:
+          description: "An array of feedback objects"
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Dwarf'
+definitions:
+
+  Feedback:
+    type: object
+    description: a short sturdy creature fond of drink and industry!
+    properties:
+      text:
+        type: string
+      os:
+        type: string
+      stars: 
+        type: int
+      id:
+        type: int
