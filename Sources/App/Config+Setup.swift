@@ -28,6 +28,6 @@ extension Config {
     /// schemas prepared before the app boots
     private func setupPreparations() throws {
         preparations.append(Feedback.self)
-        preparations.append(Post.self)
+        preparations.append(Project.self)
     }
 }

@@ -16,36 +16,46 @@ final class Feedback: Model {
     
     /// The column names for `id` and `content` in the database
     static let idKey = "id"
-    static let textKey = "text"
+    static let projectIdKey = "projectId"
+    static let feedbackTextKey = "feedback"
     static let osKey = "os"
     static let starsKey = "stars"
     
     var exists: Bool = false
     var id: Node?
-    var text: String
+    var projectId: Node?
+    var feedback: String
     var os: String
     var stars: Int
     
-    init(text: String, os: String, stars: Int) {
-        self.text = text
+    init(text: String, os: String, stars: Int, projectId: Node? = nil) {
+        self.feedback = text
         self.os = os
         self.stars = stars
+        self.projectId = projectId
     }
     
-    
+    init(node: Node, in context: Context) throws {
+        id = try node.get(Feedback.idKey)
+        projectId = try node.get(Feedback.projectIdKey)
+        feedback = try node.get(Feedback.feedbackTextKey)
+        os = try node.get(Feedback.osKey)
+        stars = try node.get(Feedback.starsKey)
+    }
     
     init(with json: JSON?) throws {
         guard let n = json else {
             print("SAAAD")
             throw ConfigError.maxResolve
         }
-        text = try n.get(Feedback.textKey)
+        projectId = try n.get(Feedback.projectIdKey)
+        feedback = try n.get(Feedback.feedbackTextKey)
         os = try n.get(Feedback.osKey)
         stars = try n.get(Feedback.starsKey)
     }
     
     init(row: Row) throws {
-        text = try row.get(Feedback.textKey)
+        feedback = try row.get(Feedback.feedbackTextKey)
         os = try row.get(Feedback.osKey)
         stars = try row.get(Feedback.starsKey)
     }
@@ -53,7 +63,7 @@ final class Feedback: Model {
     // Serializes the Post to the database
     func makeRow() throws -> Row {
         var row = Row()
-        try row.set(Feedback.textKey, text)
+        try row.set(Feedback.feedbackTextKey, feedback)
         try row.set(Feedback.osKey, os)
         try row.set(Feedback.starsKey, stars)
         return row
@@ -61,9 +71,12 @@ final class Feedback: Model {
     
     
     func makeNode() throws -> Node {
-        return try Node(node: ["text": text,
-                               "os": os,
-                               "stars": stars])
+        return try Node(node: [
+            Feedback.idKey: id,
+            Feedback.projectIdKey: projectId,
+            Feedback.feedbackTextKey: feedback,
+            Feedback.osKey: os,
+            Feedback.starsKey: stars])
     }
 }
 
@@ -72,7 +85,13 @@ extension Feedback: Preparation {
     static func prepare(_ database: Database) throws {
         try database.create(self) { builder in
             builder.id()
-            builder.string(Feedback.textKey)
+            builder.parent(Project.self,
+                           optional: false,
+                           unique: false,
+                           foreignIdKey: "project")
+            builder.string(Feedback.feedbackTextKey)
+            builder.string(Feedback.osKey)
+            builder.int(Feedback.starsKey)
         }
     }
     
@@ -87,7 +106,8 @@ extension Feedback: JSONRepresentable, ResponseRepresentable {
     func makeJSON() throws -> JSON {
         var json = JSON()
         try json.set(Feedback.idKey, id)
-        try json.set(Feedback.textKey, text)
+        try json.set(Feedback.projectIdKey, projectId)
+        try json.set(Feedback.feedbackTextKey, feedback)
         try json.set(Feedback.osKey, os)
         try json.set(Feedback.starsKey, stars)
         return json
@@ -98,8 +118,8 @@ extension Feedback: Updateable {
     
     public static var updateableKeys: [UpdateableKey<Feedback>] {
         return [
-            UpdateableKey(Feedback.textKey, String.self) { feedback, text in
-                feedback.text = text
+            UpdateableKey(Feedback.feedbackTextKey, String.self) { feedback, text in
+                feedback.feedback = text
             }
         ]
     }
