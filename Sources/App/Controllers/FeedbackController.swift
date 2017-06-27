@@ -78,7 +78,7 @@ extension Request {
         guard let json = json else {
             throw Abort.badRequest
         }
-        return try Feedback(with: json)
+        return try Feedback(node: json)
     }
 }
 

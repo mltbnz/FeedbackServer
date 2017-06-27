@@ -23,6 +23,11 @@ final class Project: Model {
     var id: Node?
     var name: String
     
+    // Computed Property
+    var feedback: Children<Project, Feedback> {
+        return children()
+    }
+    
     // MARK: Initializers
     init(name: String) {
         self.name = name
@@ -78,3 +83,4 @@ extension Project: JSONRepresentable, ResponseRepresentable {
         return json
     }
 }
+

@@ -27,7 +27,7 @@ final class Feedback: Model {
     var feedback: String
     var os: String
     var stars: Int
-    
+
     init(text: String, os: String, stars: Int, projectId: Node? = nil) {
         self.feedback = text
         self.os = os
@@ -35,7 +35,7 @@ final class Feedback: Model {
         self.projectId = projectId
     }
     
-    init(node: Node, in context: Context) throws {
+    init(node: Node) throws {
         id = try node.get(Feedback.idKey)
         projectId = try node.get(Feedback.projectIdKey)
         feedback = try node.get(Feedback.feedbackTextKey)
@@ -88,7 +88,7 @@ extension Feedback: Preparation {
             builder.parent(Project.self,
                            optional: false,
                            unique: false,
-                           foreignIdKey: "projectId")
+                           foreignIdKey: "name")
             builder.string(Feedback.feedbackTextKey)
             builder.string(Feedback.osKey)
             builder.int(Feedback.starsKey)
