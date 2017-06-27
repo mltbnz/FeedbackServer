@@ -88,7 +88,7 @@ extension Feedback: Preparation {
             builder.parent(Project.self,
                            optional: false,
                            unique: false,
-                           foreignIdKey: "project")
+                           foreignIdKey: "projectId")
             builder.string(Feedback.feedbackTextKey)
             builder.string(Feedback.osKey)
             builder.int(Feedback.starsKey)
