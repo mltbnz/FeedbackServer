@@ -107,7 +107,7 @@
       "package": "Random",
       "reason": null,
       "repositoryURL": "https://github.com/vapor/random.git",
-      "version": "1.0.0"
+      "version": "1.1.1"
     },
     {
       "package": "Routing",
@@ -137,7 +137,7 @@
       "package": "Vapor",
       "reason": null,
       "repositoryURL": "https://github.com/vapor/vapor.git",
-      "version": "2.1.0"
+      "version": "2.1.1"
     }
   ],
   "version": 1
