@@ -16,7 +16,7 @@ final class Feedback: Model {
     
     /// The column names for `id` and `content` in the database
     static let idKey = "id"
-    static let projectIdKey = "projectId"
+    static let projectIdKey = "project_id"
     static let feedbackTextKey = "feedback"
     static let osKey = "os"
     static let starsKey = "stars"
@@ -27,7 +27,7 @@ final class Feedback: Model {
     var feedback: String
     var os: String
     var stars: Int
-
+    
     init(text: String, os: String, stars: Int, projectId: Node? = nil) {
         self.feedback = text
         self.os = os
@@ -45,8 +45,7 @@ final class Feedback: Model {
     
     init(with json: JSON?) throws {
         guard let n = json else {
-            print("SAAAD")
-            throw ConfigError.maxResolve
+            throw Abort.badRequest
         }
         projectId = try n.get(Feedback.projectIdKey)
         feedback = try n.get(Feedback.feedbackTextKey)
@@ -55,6 +54,8 @@ final class Feedback: Model {
     }
     
     init(row: Row) throws {
+        id = try row.get(Feedback.idKey)
+        projectId = try row.get(Feedback.projectIdKey)
         feedback = try row.get(Feedback.feedbackTextKey)
         os = try row.get(Feedback.osKey)
         stars = try row.get(Feedback.starsKey)
@@ -63,12 +64,12 @@ final class Feedback: Model {
     // Serializes the Post to the database
     func makeRow() throws -> Row {
         var row = Row()
+        try row.set(Feedback.projectIdKey, projectId)
         try row.set(Feedback.feedbackTextKey, feedback)
         try row.set(Feedback.osKey, os)
         try row.set(Feedback.starsKey, stars)
         return row
     }
-    
     
     func makeNode() throws -> Node {
         return try Node(node: [
@@ -123,5 +124,8 @@ extension Feedback: Updateable {
             }
         ]
     }
+}
+
+extension Feedback {
     
 }

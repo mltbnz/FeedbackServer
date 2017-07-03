@@ -11,11 +11,10 @@ import FluentProvider
 import Vapor
 import HTTP
 
+
 final class Project: Model {
     
     let storage = Storage()
-    
-    internal static let entity = "project"
     
     static let nameKey = "name"
     
@@ -23,17 +22,12 @@ final class Project: Model {
     var id: Node?
     var name: String
     
-    // Computed Property
-    var feedback: Children<Project, Feedback> {
-        return children()
-    }
-    
     // MARK: Initializers
     init(name: String) {
         self.name = name
     }
     
-    init(node: Node, in context: Context) throws {
+    init(node: Node) throws {
         name = try node.get(Project.nameKey)
     }
     
@@ -64,7 +58,7 @@ extension Project: Preparation {
     
     static func prepare(_ database: Database) throws {
         try database.create(self,
-                            closure: { (builder) in
+                            closure: { builder in
                                 builder.id()
                                 builder.string(Project.nameKey)
         })
@@ -79,8 +73,27 @@ extension Project: JSONRepresentable, ResponseRepresentable {
     
     func makeJSON() throws -> JSON {
         var json = JSON()
+        try json.set(Project.idKey, id)
         try json.set(Project.nameKey, name)
         return json
     }
 }
 
+extension Project: Updateable {
+    
+    public static var updateableKeys: [UpdateableKey<Project>] {
+        return [
+            UpdateableKey(Project.nameKey, String.self) { project, name in
+                project.name = name
+            }
+        ]
+    }
+}
+
+extension Project {
+    
+    func feedback() throws -> [Feedback] {
+        return try children(type: Feedback.self,
+                            foreignIdKey: Feedback.projectIdKey).all()
+    }
+}
