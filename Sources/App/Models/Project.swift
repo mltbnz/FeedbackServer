@@ -28,6 +28,7 @@ final class Project: Model {
     }
     
     init(node: Node) throws {
+        id = try node.get(Project.idKey)
         name = try node.get(Project.nameKey)
     }
     
@@ -39,12 +40,16 @@ final class Project: Model {
     }
     
     init(row: Row) throws {
+        id = try row.get(Project.idKey)
         name = try row.get(Project.nameKey)
     }
     
     // MARK: Maker
     func makeNode(context: Context) throws -> Node {
-        return try Node(node: [Project.nameKey: name])
+        return try Node(node: [
+            Project.idKey: id,
+            Project.nameKey: name
+        ])
     }
     
     func makeRow() throws -> Row {
@@ -57,11 +62,10 @@ final class Project: Model {
 extension Project: Preparation {
     
     static func prepare(_ database: Database) throws {
-        try database.create(self,
-                            closure: { builder in
-                                builder.id()
-                                builder.string(Project.nameKey)
-        })
+        try database.create(self) { builder in
+            builder.id()
+            builder.string(Project.nameKey)
+        }
     }
     
     static func revert(_ database: Database) throws {

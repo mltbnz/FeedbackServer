@@ -125,7 +125,3 @@ extension Feedback: Updateable {
         ]
     }
 }
-
-extension Feedback {
-    
-}

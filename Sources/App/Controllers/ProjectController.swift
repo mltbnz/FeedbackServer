@@ -23,7 +23,7 @@ final class ProjectController: ResourceRepresentable {
     /// When the consumer calls 'GET' on a specific resource, ie:
     /// '/posts/13rd88' we should show that specific post
     func show(req: Request, project: Project) throws -> ResponseRepresentable {
-        return try project // try project.feedback().makeJSON()
+        return try project.feedback().makeJSON()
     }
     
     /// When consumers call 'POST' on '/project' with valid JSON
